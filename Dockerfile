@@ -4,4 +4,6 @@ ADD index.html /var/www/html
 ADD custom.sh /run/custom.sh
 USER root
 RUN chmod 775 /run/custom.sh
+USER default
 CMD /run/custom.sh
+
