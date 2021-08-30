@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rhel-web-app
+spec:
+  selector:
+    matchLabels:
+      app: rhel-web
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: rhel-web
+    spec:
+      initContainers:
+        - name: init-container
+          image: registry.redhat.io/rhel-minimal
+          command:
+            - bash
+            - "-c"
+            - | 
+                curl -o /mnt/index.html https://raw.githubusercontent.com/JK-redface/ocp-buildconfig/master/index.html
+                sed -i "s/NAME/$NAME/g" mnt/index.html
+          volumeMounts:
+            - mountPath: /mnt
+              name: webvol
+          env:
+            - name: NAME
+              value: inittest
+      volumes:
+        - name: webvol
+          emptyDir: {}
+      containers:
+        - name: webapp
+          image: image-registry.openshift-image-registry.svc:5000/dev-env/out-rhel-is
+          volumeMounts:
+            - mountPath: /var/www/html
+              name: webvol
+          ports:
+            - containerPort: 8080
