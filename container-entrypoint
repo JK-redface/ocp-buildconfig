@@ -1,3 +1,0 @@
-#!/bin/bash
-exec "$@"
-sed -i "s/NAME/$NAME/g" /var/www/html/index.html
