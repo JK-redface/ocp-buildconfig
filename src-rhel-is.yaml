@@ -1,0 +1,18 @@
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+metadata:
+  name: src-rhel-is
+  labels:
+    app: rhel-web
+    app.kubernetes.io/component: rhel-web
+    app.kubernetes.io/instance: rhel-web
+spec:
+  tags:
+    - name: latest
+      annotations:
+        openshift.io/imported-from: registry.redhat.io/rhscl/httpd-24-rhel7
+      from:
+        kind: DockerImage
+        name: registry.redhat.io/rhscl/httpd-24-rhel7
+      referencePolicy:
+        type: Source

@@ -1,0 +1,23 @@
+kind: BuildConfig
+apiVersion: build.openshift.io/v1
+metadata:
+  name: rhel-web-bc
+  labels:
+    app: rhel-web
+    app.kubernetes.io/component: rhel-web
+    app.kubernetes.io/instance: rhel-web
+spec:
+  output:
+    to:
+      kind: ImageStreamTag
+      name: 'out-rhel-is:latest'
+  strategy:
+    type: Docker
+    dockerStrategy:
+      from:
+        kind: ImageStreamTag
+        name: 'src-rhel-is:latest'
+  source:
+    type: Git
+    git:
+      uri: 'https://github.com/JK-redface/ocp-buildconfig.git'

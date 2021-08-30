@@ -1,0 +1,11 @@
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+metadata:
+  name: out-rhel-is
+  labels:
+    app: rhel-web
+    app.kubernetes.io/component: rhel-web
+    app.kubernetes.io/instance: rhel-web
+spec:
+  lookupPolicy:
+    local: false
