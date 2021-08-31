@@ -1,0 +1,71 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: ARO-Workshop-LAB
+  annotations:
+    description: "ARO Workshop Deploy Web App"
+objects:
+  - kind: Deployment
+    apiVersion: apps/v1
+    metadata:
+      name: aro-web-app
+    spec:
+      selector:
+        matchLabels:
+          app: web-app
+      replicas: 3
+      template:
+        metadata:
+          labels:
+            app: web-app
+        spec:
+          containers:
+            - name: web-container
+              image: ${IMAGE_REG}/${DEV_PROJECT}/${IMAGE_STREAM}:${IMAGE_TAG}
+              imagePullPolicy: Always
+              ports:
+                - containerPort: 8080
+      strategy:
+        type: RollingUpdate
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      labels:
+        app: web-app
+      name: aro-web-svc
+    spec:
+      ports:
+        - port: 80
+          protocol: TCP
+          targetPort: 8080
+      selector:
+        app: web-app
+  - kind: Route
+    apiVersion: route.openshift.io/v1
+    metadata:
+      name: aro-web-route
+      labels:
+        app: web-app
+    spec:
+      to:
+        kind: Service
+        name: aro-web-svc
+      port:
+        targetPort: 8080
+
+parameters:
+  - name: IMAGE_REG
+    description: "Image Registry Address"
+    required: true
+  - name: DEV_PROJECT
+    description: "The Project that has builds"
+    required: false
+    value: "dev-env"
+  - name: IMAGE_STREAM
+    description: "Output Image Stream"
+    required: false
+    value: "out-rhel-is"
+  - name: IMAGE_TAG
+    description: "Image Tag"
+    required: false
+    value: "latest"
